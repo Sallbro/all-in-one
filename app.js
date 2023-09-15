@@ -275,52 +275,52 @@ app.get('/search', (req, res) => {
 });
 
 app.get('/category', (req, res) => {
-    // ?genres&platform&page_no
     let genres = req.query.genres;
     let platform = req.query.platform;
     let page_no = req.query.page_no;
-    console.log(genres + " " + platform + " " + page_no);
+    const GENRES = JSON.parse(process.env['GENRES']);
+    const PLATFORM = JSON.parse(process.env['PLATFORM']);
     let act_url = process.env['CATEGORY_URL'];
     if (page_no === undefined) {
         page_no = 1;
     }
     if (platform !== undefined && genres === undefined) {
-        genres = process.env['GENRES1'];
+        genres = GENRES[0];
         switch (platform) {
             case "pc":
-                platform = process.env['PLATFORM1'];
+                platform = PLATFORM[0];
 
                 break;
             case "playstation":
-                platform = process.env['PLATFORM2'];
+                platform = PLATFORM[1];
 
                 break;
             case "xbox":
-                platform = process.env['PLATFORM3'];
+                platform = PLATFORM[2];
 
                 break;
             case "ios":
-                platform = process.env['PLATFORM4'];
+                platform = PLATFORM[3];
 
                 break;
             case "mac":
-                platform = process.env['PLATFORM5'];
+                platform = PLATFORM[4];
 
                 break;
             case "linux":
-                platform = process.env['PLATFORM6'];
+                platform = PLATFORM[5];
 
                 break;
             case "nindento":
-                platform = process.env['PLATFORM7'];
+                platform = PLATFORM[6];
 
                 break;
             case "android":
-                platform = process.env['PLATFORM8'];
+                platform = PLATFORM[7];
 
                 break;
             default:
-                platform = process.env['PLATFORM1'];
+                platform = PLATFORM[0];
         }
     }
     else if (platform === undefined && genres !== undefined) {
@@ -329,43 +329,43 @@ app.get('/category', (req, res) => {
 
         switch (genres) {
             case "relevance":
-                genres = process.env['GENRES1'];
+                genres = GENRES[0];
 
                 break;
             case "created":
-                genres = process.env['GENRES2'];
+                genres = GENRES[1];
 
                 break;
             case "name":
-                genres = process.env['GENRES3'];
+                genres = GENRES[2];
 
                 break;
             case "released":
-                genres = process.env['GENRES4'];
+                genres = GENRES[3];
 
                 break;
             case "added":
-                genres = process.env['GENRES5'];
+                genres = GENRES[4];
 
                 break;
             case "rating":
-                genres = process.env['GENRES6'];
+                genres = GENRES[5];
 
                 break;
             default:
-                genres = process.env['GENRES1'];
+                genres = GENRES[0];
         }
     }
     else if (genres === undefined && platform === undefined) {
         act_url = act_url.replace("&parent_platforms=", "");
         platform = "";
-        genres = process.env['GENRES1'];
+        genres = GENRES[0];
     }
     act_url = act_url.replace("${genres}", genres);
     act_url = act_url.replace("${platform}", platform);
     act_url = act_url.replace("${page_no}", page_no);
     act_url = act_url.replace("${key}", process.env['KEY']);
-    console.log(act_url);
+    
     axios.get(act_url).then(async (response) => {
         const datas = await response.data;
         const coll_resp_data = [];
@@ -556,10 +556,14 @@ app.get('/suggested_game/:id', (req, res) => {
 
 app.get('/reviews/:id', (req, res) => {
     const id = req.params.id;
+    let page_no = req.query.page_no;
     console.log(id);
+    if (page_no === undefined) {
+        page_no = 1;
+    }
     let act_url = process.env['REVIEWS_URL'];
     act_url = act_url.replace("${game_id}", id);
-    act_url = act_url.replace("${genres}", "-created");
+    act_url = act_url.replace("${page_no}", page_no);
     act_url = act_url.replace("${key}", process.env['KEY']);
     console.log(act_url);
     axios.get(act_url).then(async (response) => {
