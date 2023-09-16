@@ -275,17 +275,17 @@ app.get('/search', (req, res) => {
 });
 
 app.get('/category', (req, res) => {
-    let genres = req.query.genres;
+    let order = req.query.order;
     let platform = req.query.platform;
     let page_no = req.query.page_no;
-    const GENRES = JSON.parse(process.env['GENRES']);
+    const ORDER = JSON.parse(process.env['ORDER']);
     const PLATFORM = JSON.parse(process.env['PLATFORM']);
     let act_url = process.env['CATEGORY_URL'];
     if (page_no === undefined) {
         page_no = 1;
     }
-    if (platform !== undefined && genres === undefined) {
-        genres = GENRES[0];
+    if (platform !== undefined && order === undefined) {
+        order = ORDER[0];
         switch (platform) {
             case "pc":
                 platform = PLATFORM[0];
@@ -323,45 +323,45 @@ app.get('/category', (req, res) => {
                 platform = PLATFORM[0];
         }
     }
-    else if (platform === undefined && genres !== undefined) {
+    else if (platform === undefined && order !== undefined) {
         act_url = act_url.replace("&parent_platforms=", "");
         platform = "";
 
-        switch (genres) {
+        switch (order) {
             case "relevance":
-                genres = GENRES[0];
+                order = ORDER[0];
 
                 break;
             case "created":
-                genres = GENRES[1];
+                order = ORDER[1];
 
                 break;
             case "name":
-                genres = GENRES[2];
+                order = ORDER[2];
 
                 break;
             case "released":
-                genres = GENRES[3];
+                order = ORDER[3];
 
                 break;
             case "added":
-                genres = GENRES[4];
+                order = ORDER[4];
 
                 break;
             case "rating":
-                genres = GENRES[5];
+                order = ORDER[5];
 
                 break;
             default:
-                genres = GENRES[0];
+                order = ORDER[0];
         }
     }
-    else if (genres === undefined && platform === undefined) {
+    else if (order === undefined && platform === undefined) {
         act_url = act_url.replace("&parent_platforms=", "");
         platform = "";
-        genres = GENRES[0];
+        order = ORDER[0];
     }
-    act_url = act_url.replace("${genres}", genres);
+    act_url = act_url.replace("${order}", order);
     act_url = act_url.replace("${platform}", platform);
     act_url = act_url.replace("${page_no}", page_no);
     act_url = act_url.replace("${key}", process.env['KEY']);
